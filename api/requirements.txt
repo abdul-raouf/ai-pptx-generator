@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+psycopg2-binary
+sqlalchemy
+pydantic
+langchain
+langchain-ollama
+langchain-core
+python-pptx
+lxml
+sse-starlette
+python-dotenv
+httpx

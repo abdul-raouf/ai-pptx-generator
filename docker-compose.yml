@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://poc:poc@postgres:5432/textToPPT
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OUTPUT_DIR=/app/outputs
+      - TEMPLATE_DIR=/app/templates
+    volumes:
+      - ./outputs:/app/outputs
+      - ./templates:/app/templates
+    depends_on:
+      - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Admin123
+      POSTGRES_DB: textToPPT
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
