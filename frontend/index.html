@@ -9,32 +9,46 @@
        CSS VARIABLES & RESET
        -------------------------------------------------- */
     :root {
-      --primary: #0F52BA; /* Enterprise Blue */
-      --primary-hover: #0b3d8a;
-      --bg-color: #F8FAFC;
-      --surface-color: #FFFFFF;
-      --text-main: #1E293B;
-      --text-muted: #64748B;
-      --border-color: #E2E8F0;
-      --bot-msg-bg: #F1F5F9;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-color: #f1f5f9;
+      --surface-color: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --bot-msg-bg: #f8fafc;
       --user-msg-bg: var(--primary);
-      --danger: #EF4444;
-      --success: #10B981;
+      --danger: #ef4444;
+      --success: #10b981;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --radius-lg: 12px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* --------------------------------------------------
+       ANIMATIONS
+       -------------------------------------------------- */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     /* --------------------------------------------------
@@ -43,89 +57,113 @@
     .app-container {
       display: flex;
       flex-direction: column;
-      max-width: 900px;
+      max-width: 1000px;
       width: 100%;
       height: 100vh;
       margin: 0 auto;
       background-color: var(--surface-color);
-      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-lg);
+      position: relative;
     }
 
     .header {
-      padding: 20px 24px;
+      padding: 20px 28px;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
-      background: var(--surface-color);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     .header h1 {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 600;
+      letter-spacing: -0.01em;
       color: var(--text-main);
     }
 
     .chat-window {
       flex: 1;
       overflow-y: auto;
-      padding: 24px;
+      padding: 32px 28px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
       scroll-behavior: smooth;
     }
 
     .input-area {
-      padding: 20px 24px;
+      padding: 20px 28px;
       border-top: 1px solid var(--border-color);
       background: var(--surface-color);
       display: flex;
       gap: 12px;
       align-items: flex-end;
+      z-index: 10;
     }
 
     textarea {
       flex: 1;
       resize: none;
-      padding: 12px 16px;
+      padding: 14px 18px;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
+      border-radius: var(--radius-lg);
       font-family: inherit;
       font-size: 0.95rem;
-      line-height: 1.4;
+      line-height: 1.5;
       outline: none;
-      transition: border-color 0.2s;
-      max-height: 120px;
+      transition: all 0.2s;
+      max-height: 150px;
+      background: var(--bg-color);
     }
 
     textarea:focus {
       border-color: var(--primary);
+      background: var(--surface-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
-    button.send-btn {
-      background-color: var(--primary);
-      color: white;
+    /* --------------------------------------------------
+       BUTTONS
+       -------------------------------------------------- */
+    .btn {
       border: none;
       border-radius: 8px;
-      padding: 0 24px;
-      height: 44px;
-      font-size: 0.95rem;
+      padding: 0 20px;
+      font-size: 0.9rem;
       font-weight: 500;
       cursor: pointer;
-      transition: background-color 0.2s;
-      display: flex;
+      transition: all 0.2s;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      height: 40px;
+      text-decoration: none;
     }
 
-    button.send-btn:hover {
-      background-color: var(--primary-hover);
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
     }
 
-    button.send-btn:disabled {
-      background-color: var(--text-muted);
-      cursor: not-allowed;
+    .btn-primary:hover { background-color: var(--primary-hover); }
+    .btn-primary:disabled { background-color: var(--text-muted); cursor: not-allowed; }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
     }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-color);
+      border-color: var(--text-muted);
+    }
+
+    #send-btn { height: 50px; border-radius: var(--radius-lg); padding: 0 28px; }
 
     /* --------------------------------------------------
        CHAT BUBBLES
@@ -133,25 +171,20 @@
     .message-wrapper {
       display: flex;
       flex-direction: column;
-      max-width: 80%;
+      max-width: 85%;
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .message-wrapper.user {
-      align-self: flex-end;
-      align-items: flex-end;
-    }
-
-    .message-wrapper.assistant {
-      align-self: flex-start;
-      align-items: flex-start;
-    }
+    .message-wrapper.user { align-self: flex-end; align-items: flex-end; }
+    .message-wrapper.assistant { align-self: flex-start; align-items: flex-start; }
 
     .message {
-      padding: 12px 16px;
-      border-radius: 12px;
+      padding: 14px 18px;
+      border-radius: var(--radius-lg);
       font-size: 0.95rem;
-      line-height: 1.5;
+      line-height: 1.6;
       white-space: pre-wrap;
+      box-shadow: var(--shadow-sm);
     }
 
     .message-wrapper.user .message {
@@ -161,70 +194,137 @@
     }
 
     .message-wrapper.assistant .message {
-      background-color: var(--bot-msg-bg);
+      background-color: var(--surface-color);
+      border: 1px solid var(--border-color);
       color: var(--text-main);
       border-bottom-left-radius: 4px;
     }
 
-    .error-msg {
-      color: var(--danger);
-      font-size: 0.85rem;
-      margin-top: 4px;
-    }
+    .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 6px; }
 
     /* --------------------------------------------------
        TEMPLATE CARDS
        -------------------------------------------------- */
     .templates-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
       width: 100%;
-      max-width: 700px;
       align-self: flex-start;
+      animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .template-card {
       background: var(--surface-color);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
-      cursor: pointer;
+      border-radius: var(--radius-lg);
+      padding: 20px;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
     }
 
     .template-card:hover {
       border-color: var(--primary);
-      box-shadow: 0 4px 12px rgba(15, 82, 186, 0.1);
+      box-shadow: var(--shadow-md);
       transform: translateY(-2px);
     }
 
-    .template-card h4 {
-      margin-bottom: 6px;
-      font-size: 0.95rem;
-      color: var(--text-main);
+    .template-card h4 { margin-bottom: 8px; font-size: 1rem; color: var(--text-main); }
+    .template-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; flex-grow: 1; margin-bottom: 16px; }
+    
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .card-actions .btn { flex: 1; height: 36px; font-size: 0.85rem; }
+
+    /* --------------------------------------------------
+       MODAL (TEMPLATE PREVIEW)
+       -------------------------------------------------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeIn 0.2s ease-out;
     }
 
-    .template-card p {
-      font-size: 0.8rem;
+    .modal-content {
+      background: var(--surface-color);
+      width: 90%;
+      max-width: 800px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 { font-size: 1.1rem; }
+    .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+    .close-btn:hover { color: var(--text-main); }
+
+    .modal-body {
+      padding: 24px;
+      background: var(--bg-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+    }
+
+    .preview-image {
+      max-width: 100%;
+      max-height: 60vh;
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .preview-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       color: var(--text-muted);
-      line-height: 1.4;
+      gap: 12px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
     }
 
     /* --------------------------------------------------
-       PROGRESS & TYPING INDICATORS
+       PROGRESS & TYPING
        -------------------------------------------------- */
     .typing-indicator {
       display: flex;
-      gap: 4px;
-      padding: 16px;
-      background-color: var(--bot-msg-bg);
-      border-radius: 12px;
+      gap: 6px;
+      padding: 16px 20px;
+      background-color: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
       border-bottom-left-radius: 4px;
       align-self: flex-start;
       align-items: center;
+      animation: slideUp 0.3s ease-out forwards;
     }
 
     .dot {
@@ -239,21 +339,22 @@
     .dot:nth-child(2) { animation-delay: -0.16s; }
 
     @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1); }
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
     }
 
     .progress-container {
       background: var(--surface-color);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
+      border-radius: var(--radius-lg);
+      padding: 20px;
       display: flex;
       align-items: center;
       gap: 16px;
       align-self: flex-start;
-      min-width: 300px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      min-width: 320px;
+      box-shadow: var(--shadow-sm);
+      animation: slideUp 0.3s ease-out forwards;
     }
 
     .spinner {
@@ -265,91 +366,34 @@
       animation: spin 1s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .progress-text {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .progress-status {
-      font-weight: 500;
-      font-size: 0.95rem;
-      color: var(--text-main);
-    }
-
-    .progress-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .progress-text { display: flex; flex-direction: column; }
+    .progress-status { font-weight: 500; font-size: 0.95rem; }
+    .progress-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
 
     /* --------------------------------------------------
-       COMPLETE STATE & BUTTONS
+       COMPLETE STATE
        -------------------------------------------------- */
     .complete-card {
       background: var(--surface-color);
       border: 1px solid var(--success);
-      border-radius: 8px;
+      border-radius: var(--radius-lg);
       padding: 24px;
       align-self: flex-start;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
-      max-width: 400px;
+      box-shadow: var(--shadow-md);
+      max-width: 450px;
+      animation: slideUp 0.4s ease-out forwards;
     }
 
-    .complete-card h3 {
-      color: var(--success);
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .complete-card h3 { color: var(--success); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
 
-    .btn-primary {
-      background-color: var(--primary);
-      color: white;
-      text-decoration: none;
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: 500;
-      font-size: 0.95rem;
-      transition: background 0.2s;
-      border: none;
-      cursor: pointer;
-      display: block;
-    }
-    .btn-primary:hover { background-color: var(--primary-hover); }
-
-    .btn-secondary {
-      background-color: transparent;
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: 500;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-secondary:hover {
-      background-color: var(--bg-color);
-      border-color: var(--text-muted);
-    }
-
-    /* --------------------------------------------------
-       RESPONSIVE
-       -------------------------------------------------- */
     @media (max-width: 768px) {
       .app-container { height: 100vh; max-width: 100%; border-radius: 0; }
-      .message-wrapper { max-width: 90%; }
-      .templates-grid { grid-template-columns: 1fr; }
+      .message-wrapper { max-width: 95%; }
     }
   </style>
 </head>
@@ -368,33 +412,55 @@
 
     <div class="input-area">
       <textarea id="user-input" placeholder="Describe the presentation you need... (Shift+Enter for new line)" rows="1"></textarea>
-      <button id="send-btn" class="send-btn">Send</button>
+      <button id="send-btn" class="btn btn-primary">Send</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="preview-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Template Preview</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="modal-image" class="preview-image" src="" alt="Template Preview" onerror="handleImageError()">
+        <div id="modal-fallback" class="preview-fallback" style="display: none;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          <p>Live preview generating...</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn btn-primary" id="modal-select-btn">Select Template</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const API = '/api/v1';
+    const API = './api'; // Adjusted to local relative path as requested
     let jobId = null;
     let eventSource = null;
+    let selectedTemplateForModal = null;
 
     const chatWindow = document.getElementById('chat-window');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
+    const modal = document.getElementById('preview-modal');
 
     let typingIndicator = null;
     let progressIndicator = null;
 
-    // Hardcoded templates for the custom UI
+    // Hardcoded templates for UI mapping
     const TEMPLATES = [
-      { id: '1', name: 'Corporate Minimal', desc: 'Clean, spacious design with stark typography.' },
-      { id: '2', name: 'Modern Tech', desc: 'Dark mode with vibrant accent colors.' },
-      { id: '3', name: 'Executive Summary', desc: 'Data-heavy layouts for financial reporting.' }
+      { id: '1', name: 'Corporate Minimal', desc: 'Clean, spacious design with stark typography tailored for QBRs.' },
+      { id: '2', name: 'Modern Tech', desc: 'Dark mode layouts with vibrant accent colors for product launches.' },
+      { id: '3', name: 'Executive Summary', desc: 'Data-heavy, high-density layouts optimized for financial reporting.' }
     ];
 
-    // --- UI Helpers ---
+    // --- Core UI Helpers ---
 
     function scrollToBottom() {
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+      setTimeout(() => { chatWindow.scrollTop = chatWindow.scrollHeight; }, 50);
     }
 
     function addMessage(role, text) {
@@ -422,12 +488,50 @@
     function setLoading(loading) {
       sendBtn.disabled = loading;
       userInput.disabled = loading;
-      if (!loading) {
-        userInput.focus();
-      }
+      if (!loading) userInput.focus();
     }
 
-    // --- Typing Indicator ---
+    // --- Modal Logic ---
+    function openModal(templateId) {
+      const t = TEMPLATES.find(x => x.id === templateId);
+      if(!t) return;
+      
+      selectedTemplateForModal = t;
+      document.getElementById('modal-title').textContent = `${t.name} - Preview`;
+      
+      const img = document.getElementById('modal-image');
+      const fallback = document.getElementById('modal-fallback');
+      
+      img.style.display = 'block';
+      fallback.style.display = 'none';
+      
+      // Attempt to load preview from the backend templates folder
+      img.src = `${API}/templates/${t.id}/preview.png`;
+      
+      modal.style.display = 'flex';
+      
+      document.getElementById('modal-select-btn').onclick = () => {
+        closeModal();
+        handleTemplateSelection(t);
+      };
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      selectedTemplateForModal = null;
+    }
+
+    function handleImageError() {
+      document.getElementById('modal-image').style.display = 'none';
+      document.getElementById('modal-fallback').style.display = 'flex';
+    }
+
+    // Close modal on outside click
+    window.onclick = function(event) {
+      if (event.target == modal) closeModal();
+    }
+
+    // --- Typings & Progress ---
     function showTyping() {
       if (typingIndicator) return;
       typingIndicator = document.createElement('div');
@@ -444,8 +548,7 @@
       }
     }
 
-    // --- Progress Indicator ---
-    function showProgress(initialStatus = "Initializing generation...") {
+    function showProgress(initialStatus = "Initializing framework...") {
       if (progressIndicator) return;
       progressIndicator = document.createElement('div');
       progressIndicator.className = 'progress-container';
@@ -453,7 +556,7 @@
         <div class="spinner"></div>
         <div class="progress-text">
           <div class="progress-status" id="prog-status">${initialStatus}</div>
-          <div class="progress-meta" id="prog-meta">Building slides... (~est. 1-2 mins)</div>
+          <div class="progress-meta" id="prog-meta">Compiling assets... (~est. 1-2 mins)</div>
         </div>
       `;
       chatWindow.appendChild(progressIndicator);
@@ -463,9 +566,7 @@
     function updateProgress(statusMsg, metaMsg = null) {
       if (!progressIndicator) return;
       document.getElementById('prog-status').textContent = statusMsg;
-      if (metaMsg) {
-        document.getElementById('prog-meta').textContent = metaMsg;
-      }
+      if (metaMsg) document.getElementById('prog-meta').textContent = metaMsg;
     }
 
     function hideProgress() {
@@ -475,10 +576,11 @@
       }
     }
 
-    // --- Custom UI Components ---
+    // --- Custom Components ---
     function renderTemplateCards() {
       const grid = document.createElement('div');
       grid.className = 'templates-grid';
+      grid.id = 'active-template-grid';
 
       TEMPLATES.forEach(t => {
         const card = document.createElement('div');
@@ -486,18 +588,38 @@
         card.innerHTML = `
           <h4>${t.name}</h4>
           <p>${t.desc}</p>
+          <div class="card-actions">
+            <button class="btn btn-secondary preview-trigger" data-id="${t.id}">Preview</button>
+            <button class="btn btn-primary select-trigger" data-id="${t.id}">Select</button>
+          </div>
         `;
-        card.addEventListener('click', () => {
-          // Disable grid after selection
-          grid.style.pointerEvents = 'none';
-          grid.style.opacity = '0.6';
-          sendMessage(t.id, `Selected Template: ${t.name}`);
-        });
         grid.appendChild(card);
       });
 
       chatWindow.appendChild(grid);
+      
+      // Bind events
+      grid.querySelectorAll('.preview-trigger').forEach(btn => {
+        btn.addEventListener('click', (e) => openModal(e.target.getAttribute('data-id')));
+      });
+      grid.querySelectorAll('.select-trigger').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const t = TEMPLATES.find(x => x.id === e.target.getAttribute('data-id'));
+          handleTemplateSelection(t);
+        });
+      });
+
       scrollToBottom();
+    }
+
+    function handleTemplateSelection(template) {
+      const grid = document.getElementById('active-template-grid');
+      if (grid) {
+        grid.style.pointerEvents = 'none';
+        grid.style.opacity = '0.5';
+        grid.removeAttribute('id');
+      }
+      sendMessage(template.id, `Selected Template: ${template.name}`);
     }
 
     function renderCompleteCard(downloadUrl, messageText) {
@@ -508,10 +630,10 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
           Presentation Ready
         </h3>
-        <p style="font-size: 0.95rem; color: var(--text-main);">${messageText}</p>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
-          <a href="${downloadUrl}" target="_blank" class="btn-primary">Download PPTX</a>
-          <button class="btn-secondary" id="reset-btn">Start New Presentation</button>
+        <p style="font-size: 0.95rem; color: var(--text-main); margin-bottom: 8px;">${messageText}</p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <a href="${downloadUrl}" target="_blank" class="btn btn-primary">Download .PPTX</a>
+          <button class="btn btn-secondary" id="reset-btn">Start New Presentation</button>
         </div>
       `;
       
@@ -523,10 +645,7 @@
 
     function resetApp() {
       jobId = null;
-      if (eventSource) {
-        eventSource.close();
-        eventSource = null;
-      }
+      if (eventSource) { eventSource.close(); eventSource = null; }
       chatWindow.innerHTML = `
         <div class="message-wrapper assistant">
           <div class="message">Hello again! What presentation can I help you build next?</div>
@@ -536,19 +655,16 @@
       setLoading(false);
     }
 
-
-    // --- Core Logic ---
-
+    // --- API Logic ---
     async function sendMessage(textOverride = null, displayOverride = null) {
       const text = textOverride !== null ? textOverride : userInput.value.trim();
       if (!text) return;
 
-      // Add user message to UI
       addMessage('user', displayOverride || text);
       
       if (textOverride === null) {
         userInput.value = '';
-        userInput.style.height = 'auto'; // reset textarea height
+        userInput.style.height = 'auto';
       }
       
       setLoading(true);
@@ -558,8 +674,7 @@
         let res, data;
 
         if (!jobId) {
-          // POST /api/v1/jobs
-          res = await fetch(`${API}/jobs`, {
+          res = await fetch(`${API}/v1/jobs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text })
@@ -567,8 +682,7 @@
           data = await res.json();
           jobId = data.job_id;
         } else {
-          // POST /api/v1/jobs/{job_id}/message
-          res = await fetch(`${API}/jobs/${jobId}/message`, {
+          res = await fetch(`${API}/v1/jobs/${jobId}/message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text })
@@ -578,13 +692,10 @@
 
         hideTyping();
 
-        // 1. Check if the assistant is asking for a template selection (Step 2)
-        // We intercept the prompt to pick 1, 2, or 3 and render the cards instead.
         const msgText = data.reply || "";
         const isTemplateRequest = msgText.includes("1, 2, or 3") || msgText.toLowerCase().includes("pick a template");
 
         if (isTemplateRequest) {
-          // Clean the message to remove the raw instruction, or just show it and append cards
           let cleanMsg = msgText.replace(/\(1, 2, or 3\)/g, '').trim();
           addMessage('assistant', cleanMsg);
           renderTemplateCards();
@@ -592,10 +703,8 @@
           return;
         } 
         
-        // Render normal assistant message
         if (msgText) addMessage('assistant', msgText);
 
-        // 2. Check if we need to stream progress
         if (['storyboard_generation', 'storyboard_verification', 'pptx_generation'].includes(data.stage)) {
           openStream();
         } else {
@@ -604,26 +713,30 @@
 
       } catch (err) {
         hideTyping();
-        addError('Failed to communicate with the server. Please check your connection and try again.');
+        addError('Failed to communicate with the server. Please check your connection.');
         setLoading(false);
       }
     }
 
     function openStream() {
       if (eventSource) eventSource.close();
-      
       showProgress("Starting generation process...");
 
-      eventSource = new EventSource(`${API}/jobs/${jobId}/stream`);
+      eventSource = new EventSource(`${API}/v1/jobs/${jobId}/stream`);
 
       eventSource.onmessage = (e) => {
         const payload = JSON.parse(e.data);
-
         if (payload.type === 'ping') return;
 
         if (payload.type === 'progress' || payload.message) {
-          // Assume progress events send updates via payload.message
-          updateProgress(payload.message, "Compiling assets and formatting slides...");
+          updateProgress(payload.message, "Structuring slides and formatting...");
+        }
+
+        if (payload.type === 'chart_data_needed') {
+            hideProgress();
+            addMessage('assistant', payload.message);
+            setLoading(false);  // Re-enable input so user can paste data
+            return;
         }
 
         if (payload.type === 'complete') {
@@ -644,7 +757,7 @@
       eventSource.onerror = () => {
         eventSource.close();
         hideProgress();
-        addError('Connection to the generation server was lost. Please refresh and try again.');
+        addError('Connection lost. The generation might still be running.'); 
         setLoading(false);
       };
     }
@@ -659,7 +772,6 @@
       }
     });
 
-    // Auto-resize textarea
     userInput.addEventListener('input', function() {
       this.style.height = 'auto';
       this.style.height = (this.scrollHeight) + 'px';

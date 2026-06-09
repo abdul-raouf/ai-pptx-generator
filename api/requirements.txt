@@ -11,3 +11,6 @@ lxml
 sse-starlette
 python-dotenv
 httpx
+matplotlib
+pandas
+openpyxl

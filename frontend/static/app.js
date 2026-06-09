@@ -95,11 +95,13 @@ function openStream() {
   if (eventSource) eventSource.close();
 
   addStatus('Generating your presentation...');
+  console.log('[SSE] opening stream for job:', jobId);
 
   eventSource = new EventSource(`${API}/jobs/${jobId}/stream`);
 
   eventSource.onmessage = (e) => {
     const payload = JSON.parse(e.data);
+    console.log('[SSE] received:', payload);
 
     if (payload.type === 'ping') return;
 
@@ -114,6 +116,15 @@ function openStream() {
       eventSource.close();
       addMessage('assistant', `Something went wrong: ${payload.message}`);
       setLoading(false);
+    }
+    
+    if (payload.type === 'chart_data_needed') {
+    addMessage('assistant', payload.message);
+    setLoading(false);   // Re-enable input so user can paste data
+}
+
+    if (payload.type === 'progress') {
+      addStatus(payload.message);
     }
   };
 

@@ -3,6 +3,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
+from pptx.enum.shapes import PP_PLACEHOLDER_TYPE
 from lxml import etree
 from pptx.oxml.ns import qn
 from models.schemas import StoryboardOutput, SlideStoryboard
@@ -27,21 +28,82 @@ SLIDE_LAYOUT_MAP = {
     "closing": 2,
 }
 
-SHAPE_TITLE    = "Title 1"
-SHAPE_BODY     = "Content Placeholder 2"
-SHAPE_SUBTITLE = "Subtitle 2"
+# SHAPE_TITLE    = "Title 1"
+# SHAPE_BODY     = "Content Placeholder 2"
+# SHAPE_SUBTITLE = "Subtitle 2"
+
+
+
+
+
 
 
 class RenderingAgent:
     def __init__(self):
         os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+    def _get_title_placeholder(self, slide):
+        for shape in slide.placeholders:
+            try:
+                if shape.placeholder_format.type in (
+                    PP_PLACEHOLDER_TYPE.TITLE,
+                    PP_PLACEHOLDER_TYPE.CENTER_TITLE,
+                ):
+                    return shape
+            except Exception:
+                pass
+
+        return None
+
+    
+    def _get_subtitle_placeholder(self, slide):
+        for shape in slide.placeholders:
+            try:
+                if shape.placeholder_format.type == PP_PLACEHOLDER_TYPE.SUBTITLE:
+                    return shape
+            except Exception:
+                pass
+        return None
+    
+    def _get_body_placeholder(self, slide):
+        for shape in slide.placeholders:
+            try:
+                if shape.placeholder_format.type in (
+                    PP_PLACEHOLDER_TYPE.BODY,
+                    PP_PLACEHOLDER_TYPE.OBJECT,
+                    PP_PLACEHOLDER_TYPE.VERTICAL_BODY,
+                ):
+                    return shape
+            except Exception:
+                pass
+
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                name = shape.name.lower()
+
+                if (
+                    "content" in name
+                    or "body" in name
+                    or "text" in name
+                ):
+                    return shape
+
+        return None
+    
+    
     def _get_shape(self, slide, name: str):
         for shape in slide.shapes:
             print(shape.name)
             if shape.name == name and shape.has_text_frame:
                 return shape
         return None
+
+    def _insert_image(self, slide, image_path: str):
+        left   = Inches(1.0)
+        top    = Inches(2.2)
+        width  = Inches(8.0)
+        height = Inches(4.0)
+        slide.shapes.add_picture(image_path, left, top, width, height)
 
     def _set_text(self, shape, text: str):
         if shape is None:
@@ -91,16 +153,31 @@ class RenderingAgent:
     def _write_speaker_notes(self, slide, text: str):
         slide.notes_slide.notes_text_frame.text = text
 
-    def _populate_title_slide(self, slide, data: SlideStoryboard, prs_title: str):
-        self._set_text(self._get_shape(slide, SHAPE_TITLE), prs_title)
-        self._set_text(self._get_shape(slide, SHAPE_SUBTITLE), data.key_message)
-        self._write_speaker_notes(slide, data.speaker_notes)
+    def _populate_title_slide(self,slide,data: SlideStoryboard,prs_title: str):
+        self._set_text(
+            self._get_title_placeholder(slide),
+            prs_title,
+        )
 
-    def _populate_content_slide(self, slide, data: SlideStoryboard):
-        self._set_text(self._get_shape(slide, SHAPE_TITLE), data.slide_title)
-        self._set_bullets(self._get_shape(slide, SHAPE_BODY), data.bullet_points)
-        if data.image_required and data.image_description:
+        self._set_text(
+            self._get_subtitle_placeholder(slide),
+            data.key_message,
+        )
+
+        self._write_speaker_notes(
+            slide,
+            data.speaker_notes,
+        )
+
+    def _populate_content_slide(self, slide, data: SlideStoryboard, chart_png: str = None):
+        self._set_text(self._get_title_placeholder(slide), data.slide_title[:80])
+        self._set_bullets(self._get_body_placeholder(slide), data.bullet_points)
+
+        if chart_png and os.path.exists(chart_png):
+            self._insert_image(slide, chart_png)
+        elif data.image_required and data.image_description:
             self._add_image_placeholder(slide, data.image_description)
+
         self._write_speaker_notes(slide, data.speaker_notes)
     
     def _add_slide_number(self, slide, index: int, total: int):
@@ -119,7 +196,11 @@ class RenderingAgent:
         run.font.size = Pt(9)
         run.font.color.rgb = RGBColor(0x99, 0x99, 0x99)
 
-    def run(self, job_id: str, template_name: str, storyboard: StoryboardOutput) -> str:
+    
+
+    def run(self, job_id: str, template_name: str, storyboard: StoryboardOutput, chart_data: dict = None) -> str:
+        chart_data = chart_data or {}
+
         template_file = TEMPLATE_MAP.get(template_name, "corporate.pptx")
         template_path = os.path.join(TEMPLATE_DIR, template_file)
 
@@ -137,15 +218,39 @@ class RenderingAgent:
                 prs.part.drop_rel(rId)
             prs.slides._sldIdLst.remove(sldId)
 
+        total = len(storyboard.slides)
+        image_count = 0
+
+
         for slide_data in storyboard.slides:
             layout_idx = SLIDE_LAYOUT_MAP.get(slide_data.slide_type, 1)
             layout = prs.slide_layouts[layout_idx]
             slide = prs.slides.add_slide(layout)
 
+            print("\n" + "=" * 50)
+            print(f"Slide Type: {slide_data.slide_type}")
+
+            for ph in slide.placeholders:
+                print(
+                    f"Name: {ph.name} | Type: {ph.placeholder_format.type}"
+                )
+
             if slide_data.slide_type == "title":
                 self._populate_title_slide(slide, slide_data, storyboard.presentation_title)
             else:
-                self._populate_content_slide(slide, slide_data)
+                png_path = chart_data.get(slide_data.slide_index, {}).get("png_path")
+                show_image = (
+                    slide_data.image_required
+                    and slide_data.image_description
+                    and slide_data.slide_type == "data"
+                    
+                )
+                self._populate_content_slide(slide, slide_data, png_path)
+                
+            
+            if slide_data.slide_type != "title":
+                self._add_slide_number(slide, slide_data.slide_index + 1, total)
+
 
         output_path = os.path.join(OUTPUT_DIR, f"{job_id}.pptx")
         prs.save(output_path)

@@ -20,7 +20,9 @@ Analyse this request and return a JSON object with these exact fields:
   - Use "corporate" for executive reports, board updates, strategy
   - Use "sales" for client proposals, pitches, product decks
   - Use "project_update" for PMO, status reports, milestone tracking
-
+- If the user's message contains inline data (CSV rows, tables, numbers), 
+  set "contains_user_data" to true in your response.
+  
 Return only valid JSON. No explanation.
 """
 
@@ -28,7 +30,7 @@ class IntentAgent:
     def __init__(self):
         self.llm = ChatOllama(
             model="gemma4:e4b",
-            base_url="http://127.0.0.1:11434",
+            base_url="http://localhost:11434",
             format="json",
             temperature=0.1
         )

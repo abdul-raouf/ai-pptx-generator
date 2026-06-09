@@ -13,6 +13,7 @@ class JobStage(str, Enum):
     CONTEXT_REQUEST         = "context_request"
     STORYBOARD_GENERATION   = "storyboard_generation"
     STORYBOARD_VERIFICATION = "storyboard_verification"
+    CHART_DATA_COLLECTION   = "chart_data_collection"
     PPTX_GENERATION         = "pptx_generation"
     COMPLETE                = "complete"
     FAILED                  = "failed"
@@ -35,6 +36,7 @@ class IntentOutput(BaseModel):
     estimated_slides: int       # 8–20
     depth: str                  # "summary" | "standard" | "detailed"
     suggested_template: str     # "corporate" | "sales" | "project_update"
+    contains_user_data: bool = False
 
 
 class KnowledgeAssessmentOutput(BaseModel):
@@ -54,7 +56,7 @@ class SlideStoryboard(BaseModel):
     bullet_points: list[str]    # 3–5 bullets
     speaker_notes: str          # Full narrative paragraph
     image_required: bool
-    image_description: str | None  # e.g. "Bar chart showing revenue growth 2020–2024"
+    image_description: str | None = None  # e.g. "Bar chart showing revenue growth 2020–2024"
 
 
 class StoryboardOutput(BaseModel):
@@ -98,3 +100,10 @@ class Job(BaseModel):
 
     # Conversation history for the UI
     messages: list[dict] = []   # {"role": "user"|"assistant", "text": str}
+
+    #Chart Slides
+    chart_slides: list[int] = []          # slide indices that need charts
+    current_chart_index: int = 0          # which chart we are currently collecting for
+    chart_data: dict[int, dict] = {}      # slide_index → {raw_data, chart_type, png_path}
+
+

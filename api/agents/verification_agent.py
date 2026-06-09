@@ -28,8 +28,11 @@ Check all of the following:
 Return a JSON object with:
 - passes: boolean (true only if ALL checks pass)
 - score: float 0.0-1.0
-- issues: list of specific problems (empty if passes)
-- fixes_required: list of specific changes needed (empty if passes)
+- issues: flat list of strings, each issue is a single string (empty list if passes)
+- fixes_required: flat list of strings, each fix is a single string (empty list if passes)
+
+IMPORTANT: issues and fixes_required must be flat arrays of strings only.
+No nested arrays. No objects. Each element must be a plain string.
 
 Return only valid JSON. No explanation.
 """

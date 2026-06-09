@@ -14,8 +14,18 @@ Build a complete storyboard for the following presentation:
 Objective: {objective}
 Audience: {audience}
 Type: {presentation_type}
-Depth: {depth}
-Slide count target: {estimated_slides}
+
+
+Slide count rules based on depth — follow these strictly:
+- "summary"  → exactly 6 to 8 slides
+- "standard" → exactly 9 to 12 slides  
+- "detailed" → exactly 13 to 16 slides
+
+Current depth: {depth}
+Target slide count: {slide_count_range}
+
+Do not exceed the upper bound. Do not pad with redundant slides.
+Every slide must earn its place.
 
 User's original request:
 {original_prompt}
@@ -41,6 +51,11 @@ Return a JSON object with:
 Return only valid JSON. No explanation.
 """
 
+DEPTH_RANGE = {
+    "summary":  "6–8",
+    "standard": "9–12",
+    "detailed": "13–16",
+}
 
 class StoryboardAgent:
     def __init__(self):
@@ -48,7 +63,7 @@ class StoryboardAgent:
             model="qwen3.6:27b",
             base_url="http://localhost:11434",
             format="json",
-            temperature=0.4
+            temperature=0.3
         )
 
     def run(self, intent: IntentOutput, original_prompt: str, clarification_answers: list[str], user_context: str | None) -> StoryboardOutput:
@@ -60,6 +75,8 @@ class StoryboardAgent:
                 + ("\n\nAdditional context:\n" + user_context if user_context else "")
             )
 
+        
+
         chain = ChatPromptTemplate.from_messages([
             ("system", SYSTEM),
             ("human", PROMPT)
@@ -69,6 +86,7 @@ class StoryboardAgent:
             **intent.model_dump(),
             "original_prompt": original_prompt,
             "user_context": context,
+            "slide_count_range": DEPTH_RANGE.get(intent.depth, "9–12"),
         })
 
         data = json.loads(result.content)
